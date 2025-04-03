@@ -60,13 +60,21 @@ const useProfile = create(
                 callback.event === "create" ||
                 callback.event === "update"
               ) {
+                if (!data.length) {
+                  return;
+                }
                 const { apellido_paterno, apellido_materno, nombres, id } =
                   data[0];
                 setState(() => ({
                   id,
                   profile: `${apellido_paterno} ${apellido_materno} ${nombres}`
                     .split(" ")
-                    .map((n) => n[0].toUpperCase() + n.slice(1).toLowerCase())
+                    .map((n) => {
+                      if (!n.length) {
+                        return n;
+                      }
+                      return n[0].toUpperCase() + n.slice(1).toLowerCase();
+                    })
                     .join(" "),
                 }));
                 return;

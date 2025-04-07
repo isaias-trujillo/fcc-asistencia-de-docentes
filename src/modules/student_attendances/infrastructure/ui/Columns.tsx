@@ -1,1 +1,1 @@
-export const columns = ['Código', 'Apellidos', 'Nombres', 'Asistencias', 'Tardanzas', 'Faltas', 'Porcentaje de inasistencia']
+export const columns = ['Código', 'Apellidos', 'Nombres', 'Correo','Asistencias', 'Tardanzas', 'Faltas', 'Porcentaje de inasistencia']

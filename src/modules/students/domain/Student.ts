@@ -3,6 +3,7 @@ type Student = {
     code: string;
     surname: string;
     givenName: string;
+    email: string;
 }
 
 export default Student

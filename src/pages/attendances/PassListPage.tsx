@@ -36,13 +36,14 @@ const PassListPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!group) return;
         setLoading(() => true);
         connectStudents().then(async () => await connectAttendances()
             .then(async () => {
-                await searchStudents(id);
+                await searchStudents({group});
                 await searchAttendances({teacherAttendanceId: lastActiveAttendance()?.id});
             })).finally(() => setLoading(() => false));
-    }, []);
+    }, [!!group]);
 
     if (loading || isMarkingAll) {
         return (

@@ -10,6 +10,7 @@ import useProfile from "@/modules/teachers/infrastructure/directus/useProfile.ts
 import {SlidingNumber} from "@/components/motion-primitives/sliding-number.tsx";
 import LoadingBlock from "@/modules/shared/infrastructure/ui/components/LoadingBlock";
 import useLiveStudents from "@/modules/students/infrastructure/directus/useLiveStudents.ts";
+import useLiveGroups from "@/modules/groups/infrastructure/directus/useLiveGroups.ts";
 
 const AttendanceReportPage = () => {
     const {id: groupId} = useParams() as { id: string };
@@ -19,19 +20,22 @@ const AttendanceReportPage = () => {
     const [params] = useSearchParams();
     const aula = params.get("aula");
     const [loading, setLoading] = useState(true);
+    const {data: groups} = useLiveGroups();
+    const group = groups().find((g) => g.id === groupId);
 
     useEffect(() => {
+        if(!group) return;
         setLoading(() => true);
         console.log({groupId, message: 'search students'});
         connectStudents().then(async () => {
-            await searchStudents(groupId);
+            await searchStudents({group});
             console.log({groupId, message: 'search students done'});
             searchCount({groupId, teacherId: teacherId ?? ''}, {period: 'all'}).then(() => {
                 console.log({groupId, message: 'search count done'});
                 setLoading(() => false);
             });
         });
-    }, [groupId, teacherId]);
+    }, [groupId, !!group, teacherId]);
 
     if (loading) {
         return (
@@ -70,7 +74,7 @@ const AttendanceReportPage = () => {
                         }}
                     />
                     <div className={"flex flex-row flex-wrap gap-0.5 items-center"}>
-                        N° total de clases: <SlidingNumber value={attendances()}/>
+                        N° días de clases: <SlidingNumber value={attendances()}/>
                     </div>
                     <StudentReportTable groupId={groupId}/>
                 </main>

@@ -5,7 +5,7 @@ import {persist} from "zustand/middleware";
 
 type Store = {
     search: (payload: { groupId: string, teacherId: string }, filters: Filters) => Promise<void>;
-    raw: Record<PropertyKey, string>;
+    raw: Record<PropertyKey, number>;
     attendances: () => number;
 }
 
@@ -36,6 +36,7 @@ const useClassesCounter = create(persist<Store>((setState, getState) => {
                     }
                 },
                 fields: ['id', 'fecha'],
+                groupBy: ['grupo', 'day(fecha)'],
             },
         })
 
@@ -43,7 +44,7 @@ const useClassesCounter = create(persist<Store>((setState, getState) => {
             if (callback.type !== 'subscription') {
                 return;
             }
-            const data = (callback?.data ?? []) as { id: string | number; fecha: string }[]; // TODO: remove id
+            const data = (callback?.data ?? []) as { grupo: string; fecha_day: number }[]; // TODO: remove id
             if (!data.length) {
                 setState(prev => ({...prev, raw: {}}))
                 return;
@@ -52,36 +53,17 @@ const useClassesCounter = create(persist<Store>((setState, getState) => {
                 setState(prev => {
                     return {
                         ...prev,
-                        raw: Object.fromEntries(data.map(item => [item.id, item.fecha]))
-                    }
-                })
-                return;
-            }
-            if (callback.event === "create" || callback.event === "update") {
-                setState(({raw, ...others}) => {
-                    return {
-                        ...others,
-                        // append only id not exits,
-                        raw: {...raw, ...Object.fromEntries(data.map(item => [item.id, item.fecha]))},
-                    }
-                })
-                return;
-            }
-
-            if (callback.event === "delete") {
-                // for this case data is an array of ids
-                setState(({raw, ...others}) => {
-                    return {
-                        ...others,
                         raw: data.reduce((acc, item) => {
-                            if (item.id in acc) {
-                                // delete the item from the hashmap
-                                delete acc[item.id];
+                            if (!(item.grupo in acc)) {
+                                acc[item.grupo] = 0;
+                            } else {
+                                acc[item.grupo] += 1;
                             }
                             return acc;
-                        }, raw)
+                        }, {} as Record<PropertyKey, number>)
                     }
-                });
+                })
+                return;
             }
         })
     }

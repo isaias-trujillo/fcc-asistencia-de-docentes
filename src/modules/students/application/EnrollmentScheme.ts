@@ -8,6 +8,7 @@ type EnrollmentScheme = {
         nombres: string;
         plan_de_estudios: string;
         ciclo: string;
+        correo: string;
     };
     grupo: string;
 }

@@ -55,6 +55,17 @@ const useLiveAttendances = create<LiveAttendanceStore>((setState, getState) => {
                 }));
                 return;
             }
+            if (['delete'].includes(callback.event)) {
+                const data = (callback?.data ?? []) as AttendanceScheme['id'][];
+                // for this case data is an array of ids
+                setState((prev) => {
+                    return {
+                        ...prev,
+                        raw: Object.fromEntries(Object.entries(prev.raw).filter(([key]) => !data.includes(key))),
+                    };
+                });
+                return;
+            }
         });
     };
 
@@ -105,6 +116,7 @@ const useLiveAttendances = create<LiveAttendanceStore>((setState, getState) => {
             throw new Error("Error al registrar las asistencias, revisa tu conexión a internet.");
         } finally {
             setState(prev => ({...prev, isMarkingAll: false}))
+            window.location.reload();
         }
     };
     return {

@@ -28,6 +28,9 @@ const useLiveGroups = create(persist<Store>((setState, getState) => {
                         "identificacion": {
                             "_eq": documentNumber
                         }
+                    },
+                    "rectificacion": {
+                        "_eq": false
                     }
                 },
                 fields: ['*', 'grupo.*', 'grupo.asignatura.*'],

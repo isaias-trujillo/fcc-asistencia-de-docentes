@@ -127,6 +127,7 @@ const StudentReportTable = ({ groupId }: { groupId: string }) => {
                 <TableCell>{r.code}</TableCell>
                 <TableCell>{r.surname}</TableCell>
                 <TableCell>{r.givenName}</TableCell>
+                <TableCell>{r.email}</TableCell>
                 <TableCell>{r.asistencias}</TableCell>
                 <TableCell>{r.tardanzas}</TableCell>
                 <TableCell>{r.faltas}</TableCell>

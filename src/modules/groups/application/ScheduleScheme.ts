@@ -6,7 +6,11 @@ export type ScheduleScheme = {
     escuela: string
     docente: string
     grupo: Grupo
-    aula?: string | null
+    aula?: string | null;
+    rectificacion: boolean
+    codigo_de_asignatura_de_referencia?: string | null;
+    seccion_de_referencia?: number | null;
+    aula_de_referencia?: string | null;
 }
 
 export type WeekDay = 'LUNES' | 'MARTES' | 'MIERCOLES' | 'JUEVES' | 'VIERNES' | 'SABADO'

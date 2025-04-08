@@ -7,27 +7,42 @@ type ProfileStore = {
   search: (documentNumber: string) => Promise<void>;
   profile?: string;
   id?: string;
-  authenticated?: boolean;
+  authenticated: boolean;
+  disconnect: () => void;
+  connected: boolean;
+  connect: () => Promise<void>;
 };
 
 const useProfile = create(
   persist<ProfileStore>(
     (setState, getState) => {
+      const client = createDirectus(
+          import.meta.env.VITE_DIRECTUS_WS_URL as string,
+      ).with(
+          realtime({
+            authMode: "handshake",
+          }),
+      );
+
       return {
         profile: undefined,
         authenticated: false,
+        disconnect: () => {
+          if (!getState().connected) return;
+          client.disconnect();
+          setState(prev => ({...prev, connected: false, raw: {}}));
+        },
+        connected: false,
+        connect: async () => {
+          if (getState().connected) {
+            return;
+          }
+          await client.connect()
+              .then(() => setState({connected: true}))
+              .catch(() => setState({connected: false}));
+        },
         search: async (documentNumber: string) => {
           try {
-            const client = createDirectus(
-              import.meta.env.VITE_DIRECTUS_WS_URL as string,
-            ).with(
-              realtime({
-                authMode: "handshake",
-              }),
-            );
-
-            await client.connect();
-
             client.sendMessage({
               type: "subscribe",
               collection: "docentes",
@@ -42,7 +57,6 @@ const useProfile = create(
 
             client.onWebSocket("message", (callback) => {
               if (callback.type == "auth" && callback.status == "error") {
-                console.log("Somebody help me xd");
                 setState((prev) => ({ ...prev, authenticated: false }));
                 return;
               }

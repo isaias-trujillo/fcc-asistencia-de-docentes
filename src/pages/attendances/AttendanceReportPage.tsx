@@ -14,7 +14,7 @@ import useLiveGroups from "@/modules/groups/infrastructure/directus/useLiveGroup
 
 const AttendanceReportPage = () => {
     const {id: groupId} = useParams() as { id: string };
-    const {attendances, search: searchCount} = useClassesCounter();
+    const {attendances, raw, search: searchCount} = useClassesCounter();
     const {search: searchStudents, connect: connectStudents, disconnect: disconnectStudents} = useLiveStudents();
     const {id: teacherId} = useProfile();
     const [params] = useSearchParams();
@@ -30,12 +30,14 @@ const AttendanceReportPage = () => {
         connectStudents().then(async () => {
             await searchStudents({group});
             console.log({groupId, message: 'search students done'});
-            searchCount({groupId, teacherId: teacherId ?? ''}, {period: 'all'}).then(() => {
+            searchCount({group, teacherId: teacherId ?? ''}, {period: 'all'}).then(() => {
                 console.log({groupId, message: 'search count done'});
                 setLoading(() => false);
             });
         });
     }, [groupId, !!group, teacherId]);
+
+    console.log({raw})
 
     if (loading) {
         return (
@@ -74,7 +76,7 @@ const AttendanceReportPage = () => {
                         }}
                     />
                     <div className={"flex flex-row flex-wrap gap-0.5 items-center"}>
-                        N° días de clases: <SlidingNumber value={attendances()}/>
+                        N° de veces que tomó asistencia a sus alumnos: <SlidingNumber value={attendances()}/>
                     </div>
                     <StudentReportTable groupId={groupId}/>
                 </main>

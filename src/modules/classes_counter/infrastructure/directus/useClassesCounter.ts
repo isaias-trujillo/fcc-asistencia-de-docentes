@@ -2,15 +2,16 @@ import {Filters} from "@/modules/student_attendances/infrastructure/directus/fil
 import {createDirectus, realtime} from "@directus/sdk";
 import {create} from "zustand/react";
 import {persist} from "zustand/middleware";
+import Group from "@/modules/groups/domain/Group.ts";
 
 type Store = {
-    search: (payload: { groupId: string, teacherId: string }, filters: Filters) => Promise<void>;
+    search: (payload: { group: Group, teacherId: string }, filters: Filters) => Promise<void>;
     raw: Record<PropertyKey, number>;
     attendances: () => number;
 }
 
 const useClassesCounter = create(persist<Store>((setState, getState) => {
-    const search: Store['search'] = async ({groupId, teacherId}) => {
+    const search: Store['search'] = async ({group, teacherId}) => {
         const client = createDirectus(import.meta.env.VITE_DIRECTUS_WS_URL as string)
             .with(realtime({
                 authMode: 'handshake',
@@ -18,25 +19,23 @@ const useClassesCounter = create(persist<Store>((setState, getState) => {
         await client.connect();
         client.sendMessage({
             type: "subscribe",
-            collection: "asistencias_de_docentes",
+            collection: "asistencias_de_alumnos",
             query: {
                 filter: {
-                    "grupo": {
-                        "id": {
-                            "_eq": groupId
-                        }
-                    },
-                    "docente": {
-                        "id": {
-                            "_eq": teacherId
-                        }
+                    sesion: {
+                        grupo: {
+                            asignatura: {
+                                codigo: {
+                                    _eq: group.course.code
+                                }
+                            }
+                        },
                     },
                     "estado": {
                         "_in": ["asistencia", "tardanza"]
                     }
                 },
-                fields: ['id', 'fecha'],
-                groupBy: ['grupo', 'day(fecha)'],
+                fields: ['*', 'sesion.*'],
             },
         })
 
@@ -54,10 +53,11 @@ const useClassesCounter = create(persist<Store>((setState, getState) => {
                     return {
                         ...prev,
                         raw: data.reduce((acc, item) => {
-                            if (!(item.grupo in acc)) {
-                                acc[item.grupo] = 0;
+                            const key = `${item.grupo}_${item.fecha_day}`;
+                            if (!(key in acc)) {
+                                acc[key] = 1;
                             } else {
-                                acc[item.grupo] += 1;
+                                acc[key] += 1;
                             }
                             return acc;
                         }, {} as Record<PropertyKey, number>)
@@ -69,7 +69,7 @@ const useClassesCounter = create(persist<Store>((setState, getState) => {
     }
     return {
         search,
-        attendances: () => Object.keys((getState()?.raw ?? {})).length,
+        attendances: () => Object.values((getState()?.raw ?? {})).reduce((acc, v) => acc + v, 0),
         raw: {},
     }
 }, {

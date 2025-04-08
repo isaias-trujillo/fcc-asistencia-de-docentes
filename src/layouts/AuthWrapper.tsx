@@ -15,16 +15,16 @@ import { FC, ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router";
 
 const AuthWrapper: FC<{ children: ReactNode }> = ({ children }) => {
-  const { authenticated, search } = useProfile();
+  const { authenticated, search, connect, disconnect } = useProfile();
   const navigate = useNavigate();
   const { logout, documentNumber } = useAuth();
 
   useEffect(() => {
-    search(documentNumber ?? "");
+    connect().then(() => search(documentNumber ?? ""));
   }, []);
 
   const onLogout = () =>
-    logout().finally(() => {
+    logout().then(() => disconnect()).finally(() => {
       localStorage.clear();
       navigate("/");
       window.location.reload();

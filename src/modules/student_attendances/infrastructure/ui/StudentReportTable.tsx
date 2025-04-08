@@ -125,8 +125,7 @@ const StudentReportTable = ({ groupId }: { groupId: string }) => {
             {parsedData.map((r) => (
               <TableRow key={r.id}>
                 <TableCell>{r.code}</TableCell>
-                <TableCell>{r.surname}</TableCell>
-                <TableCell>{r.givenName}</TableCell>
+                <TableCell>{`${r.surname} ${r.givenName}`}</TableCell>
                 <TableCell>{r.email}</TableCell>
                 <TableCell>{r.asistencias}</TableCell>
                 <TableCell>{r.tardanzas}</TableCell>

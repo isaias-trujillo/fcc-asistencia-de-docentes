@@ -1,15 +1,15 @@
 import {createDirectus, readItems, rest} from "@directus/sdk";
 import {create} from "zustand/react";
 import EnrollmentScheme from "@/modules/students/application/EnrollmentScheme.ts";
-import Student from "@/modules/students/domain/Student.ts";
 import schemeToStudent from "@/modules/students/application/schemeToStudent.ts";
 import Group from "@/modules/groups/domain/Group.ts";
 import {ScheduleScheme} from "@/modules/groups/application/ScheduleScheme.ts";
+import Student from "@/modules/students/domain/Student.ts";
 
 type Store = {
     search: ({group}: { group: Group }) => Promise<void>;
     raw: Record<PropertyKey, EnrollmentScheme>;
-    data: () => Student[];
+    data: () => (Student & { groupId: string })[];
     disconnect: () => void;
     connected: boolean;
     connect: () => Promise<void>;

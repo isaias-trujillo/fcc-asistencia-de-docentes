@@ -1,3 +1,5 @@
+import Group from "@/modules/groups/domain/Group.ts";
+
 export type Filters = ({
     period: 'today' | 'this week' | 'this month' | 'all'; // default today
     range?: undefined;
@@ -9,4 +11,5 @@ export type Filters = ({
     studentId?: string;
     page?: number;
     perPage?: number;
+    group?: Group;
 }

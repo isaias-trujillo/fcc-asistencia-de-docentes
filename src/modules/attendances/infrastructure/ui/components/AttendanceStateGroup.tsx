@@ -1,96 +1,80 @@
-import {FC} from "react";
+import {FC, memo, useCallback, useEffect, useState} from "react";
 import AttendanceScheme from "@/modules/attendances/application/AttendanceScheme.ts";
 import useLiveAttendances from "@/modules/attendances/infrastructure/directus/useLiveAttendances.ts";
 import useChron from "@/modules/chron/infrastructure/directus/useChron.ts";
 import {SpellCheck, Type} from "lucide-react";
-
-import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
 import useTeacherAttendance from "@/modules/teacher_attendances/infrastructure/directus/useTeacherAttendance.ts";
 import {LetterFIcon} from "@/modules/attendances/infrastructure/ui/components/LetterFIcon.tsx";
+import {cn} from "@/lib/utils.ts";
+import {selectedClass} from "@/modules/attendances/infrastructure/ui/components/selectedClass.ts"; // si estás usando shadcn/utils
 
 type AttendanceStateGroupProps = {
     studentId: string;
 };
 
-const AttendanceStateGroup: FC<AttendanceStateGroupProps> = ({
-                                                                 studentId,
-                                                             }) => {
-    const {mark, raw} = useLiveAttendances();
-    const {lastActiveAttendance} = useTeacherAttendance();
-
+const AttendanceStateGroup: FC<AttendanceStateGroupProps> = memo(({ studentId }) => {
+    const { mark, raw } = useLiveAttendances();
+    const { lastActiveAttendance } = useTeacherAttendance();
     const attendance = raw[studentId] ?? undefined;
     const chron = useChron((s) => s.chron);
 
+    const [selected, setSelected] = useState<AttendanceScheme["estado"] | "">("");
+
+    useEffect(() => {
+        setSelected(attendance ?? "");
+    }, [attendance]);
+
+    const handleClick = useCallback(
+        async (value: AttendanceScheme["estado"]) => {
+            setSelected(value);
+            const date = new Date(chron().original).toISOString().split("T")[0];
+            const time = `${("0" + chron().time.hours).slice(-2)}:${("0" + chron().time.minutes).toString().slice(-2)}`;
+
+            await mark({
+                state: value,
+                studentId,
+                date,
+                time,
+                teacherAttendanceId: lastActiveAttendance()?.id,
+            });
+        },
+        [chron, mark, studentId, lastActiveAttendance]
+    );
+
+    const baseClass =
+        "p-2 rounded-xl border transition-all duration-200 ease-in-out flex items-center justify-center";
+
+
     return (
-        <ToggleGroup
-            type="single"
-            size="lg"
-            onValueChange={async (value: AttendanceScheme["estado"] | "") => {
-                const date = new Date(chron().original).toISOString().split("T")[0];
-
-                const time = `${("0" + chron().time.hours).slice(-2)}:${("0" + chron().time.minutes).toString().slice(-2)}`;
-
-                await mark({
-                    state: value === "" ? "falta" : value,
-                    studentId,
-                    date,
-                    time,
-                    teacherAttendanceId: lastActiveAttendance()?.id,
-                });
-            }}
-        >
-            <ToggleGroupItem
-                value="asistencia"
+        <div className="flex gap-2">
+            <button
+                className={cn(baseClass, selected === "asistencia" && selectedClass.asistencia)}
+                onClick={() => handleClick("asistencia")}
                 aria-label="Marcar como presente"
-                style={{
-                    backgroundColor:
-                        attendance && attendance === "asistencia"
-                            ? "var(--color-green-100)"
-                            : "",
-                    color:
-                        attendance && attendance === "asistencia"
-                            ? "var(--color-green-800)"
-                            : "",
-                }}
             >
-                <SpellCheck className="size-[clamp(1rem,1rem+2dvw,1.5rem]"/>
-            </ToggleGroupItem>
-            <ToggleGroupItem
-                value="tardanza"
+                <SpellCheck className="size-[clamp(1rem,1rem+2dvw,1.5rem)]" />
+            </button>
+            <button
+                className={cn(baseClass, selected === "tardanza" && selectedClass.tardanza)}
+                onClick={() => handleClick("tardanza")}
                 aria-label="Marcar como tardanza"
-                style={{
-                    backgroundColor:
-                        attendance && attendance === "tardanza"
-                            ? "var(--color-yellow-100)"
-                            : "",
-                    color:
-                        attendance && attendance === "tardanza"
-                            ? "var(--color-yellow-800)"
-                            : "",
-                }}
             >
-                <Type className="size-[clamp(1rem,1rem+2dvw,1.5rem]"/>
-            </ToggleGroupItem>
-            <ToggleGroupItem
-                value="falta"
+                <Type className="size-[clamp(1rem,1rem+2dvw,1.5rem)]" />
+            </button>
+            <button
+                className={cn(baseClass, selected === "falta" && selectedClass.falta)}
+                onClick={() => handleClick("falta")}
                 aria-label="Marcar como ausente"
-                style={{
-                    backgroundColor:
-                        !attendance || attendance === "falta"
-                            ? "var(--color-red-100)"
-                            : "",
-                }}
             >
                 <LetterFIcon
-                    fill={
-                        !attendance || attendance === "falta"
-                            ? "var(--color-red-800)"
-                            : "var(--foreground)"
-                    }
+                    fill={selected === "falta" ? "currentColor" : "var(--foreground)"}
+                    className="size-[clamp(1rem,1rem+2dvw,1.5rem)]"
                 />
-            </ToggleGroupItem>
-        </ToggleGroup>
+            </button>
+        </div>
     );
-};
+});
+
+AttendanceStateGroup.displayName = "AttendanceStateGroup";
 
 export default AttendanceStateGroup;

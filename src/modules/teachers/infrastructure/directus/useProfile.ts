@@ -23,7 +23,7 @@ const useProfile = create<ProfileStore>(
         );
         const connect = async () => {
             if (!getState().connected) {
-                await client.connect()
+                await client?.connect()
                     .then(() => setState({connected: true}))
                     .catch(() => setState({connected: false}));
             }
@@ -31,7 +31,7 @@ const useProfile = create<ProfileStore>(
 
         const disconnect = () => {
             if (!getState().connected) return;
-            client.disconnect();
+            client?.disconnect();
             setState(prev => ({...prev, connected: false, raw: {}}));
         }
 

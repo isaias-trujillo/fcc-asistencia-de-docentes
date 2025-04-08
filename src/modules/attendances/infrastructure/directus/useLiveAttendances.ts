@@ -14,6 +14,7 @@ const useLiveAttendances = create<LiveAttendanceStore>((setState, getState) => {
     ).with(rest({credentials: "include"}));
 
     const search: LiveAttendanceStore["search"] = async ({teacherAttendanceId}) => {
+        getState().connect();
         setState({raw: {}});
         client.sendMessage({
             type: "subscribe",

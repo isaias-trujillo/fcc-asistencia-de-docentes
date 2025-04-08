@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table.tsx";
-import { columns } from "@/modules/student_attendances/infrastructure/ui/Columns.tsx";
+import { columns } from "@/modules/student_attendances/infrastructure/ui/columns.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Download } from "lucide-react";
 import useClassesCounter from "@/modules/classes_counter/infrastructure/directus/useClassesCounter.ts";

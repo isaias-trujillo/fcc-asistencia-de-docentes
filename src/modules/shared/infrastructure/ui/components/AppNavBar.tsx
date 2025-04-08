@@ -2,23 +2,17 @@ import {Button} from "@/components/ui/button.tsx";
 import useAuth from "@/modules/auth/infrastructure/useAuth.ts";
 import {useNavigate} from "react-router";
 import useProfile from "@/modules/teachers/infrastructure/directus/useProfile.ts";
-import {useEffect} from "react";
 import {LogOut} from "lucide-react";
 
 const AppNavBar = () => {
-    const {logout, documentNumber} = useAuth();
-    const {profile, search, connect, disconnect} = useProfile();
+    const {logout} = useAuth();
+    const {profile, disconnect} = useProfile();
     const navigate = useNavigate();
     const onLogout = () =>
         logout().then(() => disconnect()).finally(() => {
             localStorage.clear();
             navigate("/");
         });
-
-    useEffect(() => {
-        connect().then(() => search(documentNumber ?? ''));
-        // eslint-disable-next-line
-    }, []);
 
   return (
     <nav className="gap-x-[clamp(0.75rem,0.75rem+2vh,2rem)] gap-y-[clamp(0.5rem,0.5rem+1vh,1rem)] w-full flex flex-wrap justify-between items-center ">

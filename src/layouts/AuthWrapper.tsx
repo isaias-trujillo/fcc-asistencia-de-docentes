@@ -15,13 +15,17 @@ import { FC, ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router";
 
 const AuthWrapper: FC<{ children: ReactNode }> = ({ children }) => {
-  const { authenticated, search, connect, disconnect } = useProfile();
+  const { authenticated, search, connect, disconnect, connected } = useProfile();
   const navigate = useNavigate();
   const { logout, documentNumber } = useAuth();
 
   useEffect(() => {
-    connect().then(() => search(documentNumber ?? ""));
-  }, []);
+    connect().then(() => {
+        if (documentNumber && connected) {
+            search(documentNumber);
+        }
+    });
+  }, [connected]);
 
   const onLogout = () =>
     logout().then(() => disconnect()).finally(() => {

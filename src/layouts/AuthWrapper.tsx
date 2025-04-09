@@ -35,23 +35,20 @@ const AuthWrapper: FC<{ children: ReactNode }> = ({ children }) => {
     });
 
   if (!authenticated) {
+      localStorage.clear();
     return (
-      <Card className="relative flex flex-row items-center justify-center overflow-hidden gap-[clamp(1rem,1rem+2vh,4rem)] shadow-2xl max-sm:w-[calc(100%-max(2vw,2.5rem))] z-10 ">
-        <CardHeader className="grow">
-          <CardTitle className="text-[clamp(1.15rem,1rem+2vh,3rem)]">
+      <Card className="relative flex flex-row flex-wrap self-center items-center justify-start overflow-hidden gap-[clamp(1rem,1rem+2vh,4rem)] max-w-max  z-10 ">
+        <CardHeader>
+          <CardTitle className="text-[clamp(2rem,3rem+2vh,5rem)] text-left">
             Tu sesión ha expirado
           </CardTitle>
-          <CardDescription className="flex flex-col text-[clamp(1rem,0.75rem+1vw,1.5rem)] gap-[clamp(0.5rem,0.5rem+2vh,1rem)]">
-            <span>Vuelve a ingresar tu credencial para continuar.</span>
-            <span>O puede salir del sistema:</span>
+        </CardHeader >
+        <CardContent className="flex flex-col text-[clamp(1rem,1rem+1vw,1.75rem)] gap-[clamp(0.5rem,0.5rem+2vh,1rem)]">
+            <p className='max-w-2/3'>Puedes cerrar sesión y volver a ingresar tu documento de identidad (DNI, CE, Pasaporte, etc.)</p>
             <Button onClick={onLogout} className="font-semibold w-fit">
               <LogOut />
               Cerrar sesión
             </Button>
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="min-w-max flex flex-row gap-5 grow items-center">
-          <LoginForm />
         </CardContent>
         <BorderBeam duration={6} size={100} />
         <BorderBeam duration={6} size={100} delay={3} />

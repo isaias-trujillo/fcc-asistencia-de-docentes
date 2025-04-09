@@ -3,11 +3,9 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import LoginForm from "@/modules/auth/infrastructure/ui/components/LoginForm";
 import useAuth from "@/modules/auth/infrastructure/useAuth";
 import useProfile from "@/modules/teachers/infrastructure/directus/useProfile";
 import { LogOut } from "lucide-react";
@@ -35,7 +33,6 @@ const AuthWrapper: FC<{ children: ReactNode }> = ({ children }) => {
     });
 
   if (!authenticated) {
-      localStorage.clear();
     return (
       <Card className="relative flex flex-row flex-wrap self-center items-center justify-start overflow-hidden gap-[clamp(1rem,1rem+2vh,4rem)] max-w-max  z-10 ">
         <CardHeader>

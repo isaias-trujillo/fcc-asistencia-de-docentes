@@ -125,9 +125,7 @@ const StudentReportTable = ({ groupId }: { groupId: string }) => {
           <TableBody>
             {parsedData.map((r) => {
               const percentage = (r.faltas / r.total) * 100;
-              return <TableRow key={r.id} className={r.groupId !== groupId
-                  ? 'bg-muted/50' : ''
-              }>
+              return <TableRow key={r.id} className={`${r.groupId !== groupId ? 'bg-muted/60' : ''} text-wrap`}>
                 <TableCell>{r.code}</TableCell>
                 <TableCell>{`${r.surname} ${r.givenName}`}</TableCell>
                 <TableCell>{r.email}</TableCell>
@@ -135,13 +133,15 @@ const StudentReportTable = ({ groupId }: { groupId: string }) => {
                 <TableCell>{r.asistencias}</TableCell>
                 <TableCell>{r.tardanzas}</TableCell>
                 <TableCell>{r.faltas}</TableCell>
-                <TableCell className={`${percentage >= 30 
-                    ? 'text-rose-200 bg-rose-950/35'
-                    : percentage >= 10
-                    ? 'text-orange-200 bg-orange-950/35'
-                    : ''
-                }`}>
-                  {percentage.toFixed(0).padStart(2, "0")} %
+                <TableCell>
+                  <span className={`${percentage >= 30
+                      ? 'dark:text-rose-200 dark:bg-rose-950/35 text-rose-800 bg-red-100 font-semibold'
+                      : percentage >= 10
+                          ? 'dark:text-orange-200 dark:bg-orange-950/35 text-orange-800 bg-orange-100 font-semibold'
+                          : ''
+                  } py-1 rounded-md px-[clamp(0.25rem,0.5rem+1dvw,0.75rem)]`}>
+                    {percentage.toFixed(0).padStart(2, "0")} %
+                  </span>
                 </TableCell>
               </TableRow>
             })}

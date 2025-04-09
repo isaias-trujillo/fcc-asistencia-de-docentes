@@ -20,12 +20,12 @@ const AppNavBar = () => {
         <img
           src={`${import.meta.env.BASE_URL}/logo.svg`}
           alt="logo"
-          className="size-[clamp(2rem,2rem+1dvw,2.5rem)]"
+          className="size-[clamp(1.25rem,1.5rem+1dvw,2rem)]"
         />
-        <div className="flex flex-col max-sm:grow text-[clamp(0.75rem,0.75rem+1dvh,1.5rem)]">
+        <p className="flex flex-row max-sm:grow text-[clamp(0.75rem,0.75rem+1dvh,1.25rem)] gap-[clamp(0.25rem,0.25rem+1vh,.5rem)]">
           <span className="font-semibold">{profile ?? "@docente"}</span>
-          <span>Pregrado</span>
-        </div>
+          <span>(Pregrado)</span>
+        </p>
       </div>
       <Button onClick={onLogout} className="max-sm:grow">
         <LogOut />

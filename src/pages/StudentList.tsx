@@ -41,6 +41,7 @@ const StudentList: FC = () => {
                                 <TableCell>{student.code}</TableCell>
                                 <TableCell>{student.surname}</TableCell>
                                 <TableCell>{student.givenName}</TableCell>
+                                <TableCell>{student.email}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

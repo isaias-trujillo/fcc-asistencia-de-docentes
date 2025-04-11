@@ -1,41 +1,47 @@
 import {Filters} from "@/modules/student_attendances/infrastructure/directus/filters.ts";
 import {createDirectus, realtime} from "@directus/sdk";
 import {create} from "zustand/react";
-import {persist} from "zustand/middleware";
+import Group from "@/modules/groups/domain/Group.ts";
 
 type Store = {
-    search: (payload: { groupId: string, teacherId: string }, filters: Filters) => Promise<void>;
-    raw: Record<PropertyKey, string>;
+    search: (payload: { group: Group, teacherId: string }, filters: Filters) => Promise<void>;
+    raw: Record<PropertyKey, number>;
     attendances: () => number;
+    connected: boolean;
+    connect: () => Promise<void>;
+    disconnect: () => void;
 }
 
-const useClassesCounter = create(persist<Store>((setState, getState) => {
-    const search: Store['search'] = async ({groupId, teacherId}) => {
-        const client = createDirectus(import.meta.env.VITE_DIRECTUS_WS_URL as string)
-            .with(realtime({
-                authMode: 'handshake',
-            }))
-        await client.connect();
+const useClassesCounter = create<Store>((setState, getState) => {
+    const client = createDirectus(import.meta.env.VITE_DIRECTUS_WS_URL as string)
+        .with(realtime({
+            authMode: 'handshake',
+        }));
+    const search: Store['search'] = async ({group, teacherId}) => {
         client.sendMessage({
             type: "subscribe",
-            collection: "asistencias_de_docentes",
+            collection: "asistencias_de_alumnos",
             query: {
                 filter: {
-                    "grupo": {
-                        "id": {
-                            "_eq": groupId
+                    sesion: {
+                        grupo: {
+                            id: {
+                                _eq: group.id
+                            }
+                        },
+                        docente: {
+                            id: {
+                                _eq: teacherId
+                            }
                         }
-                    },
-                    "docente": {
-                        "id": {
-                            "_eq": teacherId
-                        }
-                    },
-                    "estado": {
-                        "_in": ["asistencia", "tardanza"]
                     }
                 },
-                fields: ['id', 'fecha'],
+                fields: ['*'],
+                limit: -1,
+                // aggregate: {
+                //     count: '*'
+                // },
+                groupBy: ['sesion'],
             },
         })
 
@@ -43,7 +49,7 @@ const useClassesCounter = create(persist<Store>((setState, getState) => {
             if (callback.type !== 'subscription') {
                 return;
             }
-            const data = (callback?.data ?? []) as { id: string | number; fecha: string }[]; // TODO: remove id
+            const data = (callback?.data ?? []) as { sesion: number }[]; // TODO: remove id
             if (!data.length) {
                 setState(prev => ({...prev, raw: {}}))
                 return;
@@ -52,46 +58,29 @@ const useClassesCounter = create(persist<Store>((setState, getState) => {
                 setState(prev => {
                     return {
                         ...prev,
-                        raw: Object.fromEntries(data.map(item => [item.id, item.fecha]))
-                    }
-                })
+                        raw: Object.fromEntries(data.map(({sesion}) => [sesion, 1]))
+                    }})
                 return;
-            }
-            if (callback.event === "create" || callback.event === "update") {
-                setState(({raw, ...others}) => {
-                    return {
-                        ...others,
-                        // append only id not exits,
-                        raw: {...raw, ...Object.fromEntries(data.map(item => [item.id, item.fecha]))},
-                    }
-                })
-                return;
-            }
-
-            if (callback.event === "delete") {
-                // for this case data is an array of ids
-                setState(({raw, ...others}) => {
-                    return {
-                        ...others,
-                        raw: data.reduce((acc, item) => {
-                            if (item.id in acc) {
-                                // delete the item from the hashmap
-                                delete acc[item.id];
-                            }
-                            return acc;
-                        }, raw)
-                    }
-                });
             }
         })
     }
     return {
         search,
-        attendances: () => Object.keys((getState()?.raw ?? {})).length,
+        attendances: () => Object.values((getState()?.raw ?? {})).reduce((acc, v) => acc + v, 0),
         raw: {},
+        connected: false,
+        connect: async () => {
+            if (getState().connected) {
+                return;
+            }
+            await client.connect().then(() => setState({connected: true})).catch(() => setState({connected: false}));
+        },
+        disconnect: () => {
+            if (!getState().connected) return;
+            client.disconnect();
+            setState(prev => ({...prev, connected: false, raw: {}}));
+        }
     }
-}, {
-    name: "classes-counter",
-}))
+})
 
 export default useClassesCounter

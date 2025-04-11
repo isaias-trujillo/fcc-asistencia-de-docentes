@@ -1,1 +1,0 @@
-export const columns = ['Código', 'Apellidos', 'Nombres', 'Asistencias', 'Tardanzas', 'Faltas', 'Porcentaje de inasistencia']

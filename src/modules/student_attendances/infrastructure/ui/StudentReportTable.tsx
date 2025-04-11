@@ -1,7 +1,6 @@
 import useAttendancesOverviewReport from "@/modules/student_attendances/infrastructure/directus/useAttendancesOverviewReport.ts";
 import { useEffect } from "react";
 import useChron from "@/modules/chron/infrastructure/directus/useChron.ts";
-import useProfile from "@/modules/teachers/infrastructure/directus/useProfile.ts";
 import useLiveStudents from "@/modules/students/infrastructure/directus/useLiveStudents.ts";
 import {
   Card,
@@ -17,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table.tsx";
-import { columns } from "@/modules/student_attendances/infrastructure/ui/Columns.tsx";
+import { columns } from "@/modules/student_attendances/infrastructure/ui/columns.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Download } from "lucide-react";
 import useClassesCounter from "@/modules/classes_counter/infrastructure/directus/useClassesCounter.ts";
@@ -25,42 +24,27 @@ import exportToExcel from "@/modules/shared/infrastructure/exportToExcel";
 import useLiveGroups from "@/modules/groups/infrastructure/directus/useLiveGroups";
 
 const StudentReportTable = ({ groupId }: { groupId: string }) => {
-  const store = useAttendancesOverviewReport();
+  const {search, data: overview} = useAttendancesOverviewReport();
   const { date } = useChron();
-  const { id: teacherId } = useProfile();
   const { data} = useLiveStudents();
-  const overview = store.data();
   const { attendances } = useClassesCounter();
   const hasStudents = data().length > 0;
   const { data: groups } = useLiveGroups();
 
   const group = groups().find((g) => g.id === groupId);
 
-  const parsedData = data().map((student) => {
-    return {
-      ...student,
-      asistencias: overview[student.id]?.asistencias ?? 0,
-      tardanzas: overview[student.id]?.tardanzas ?? 0,
-      faltas: Math.max(
-        0,
-        attendances() -
-          (overview[student.id]?.asistencias ?? 0) -
-          (overview[student.id]?.tardanzas ?? 0),
-      ),
-      total: attendances() || 1,
-    };
-  });
-
   useEffect(() => {
-    store.search(
+    if (!group) return;
+    search(
       {
-        period: "all",
-      },
-      date,
-      teacherId ?? "",
-      groupId,
+        today: date,
+        filters: {
+          period: "all",
+          group,
+        }
+      }
     );
-  }, [groupId]);
+  }, [!!group]);
 
   if (!hasStudents) {
     return (
@@ -69,6 +53,21 @@ const StudentReportTable = ({ groupId }: { groupId: string }) => {
       </p>
     );
   }
+
+  const parsedData = data().map((student) => {
+    return {
+      ...student,
+      asistencias: overview()[student.id]?.asistencias ?? 0,
+      tardanzas: overview()[student.id]?.tardanzas ?? 0,
+      faltas: Math.max(
+        0,
+        attendances() -
+          (overview()[student.id]?.asistencias ?? 0) -
+          (overview()[student.id]?.tardanzas ?? 0),
+      ),
+      total: attendances() || 1,
+    };
+  });
 
   const downloadAsExcel = () => {
     exportToExcel({
@@ -81,6 +80,8 @@ const StudentReportTable = ({ groupId }: { groupId: string }) => {
             codigo: p.code,
             apellidos: p.surname,
             nombres: p.givenName,
+            correo: p.email,
+            estado: p.groupId !== groupId ? 'rectificado' : '',
             asistencias: p.asistencias,
             tardanzas: p.tardanzas,
             faltas: p.faltas,
@@ -122,19 +123,28 @@ const StudentReportTable = ({ groupId }: { groupId: string }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {parsedData.map((r) => (
-              <TableRow key={r.id}>
+            {parsedData.map((r) => {
+              const percentage = (r.faltas / r.total) * 100;
+              return <TableRow key={r.id} className={`${r.groupId !== groupId ? 'bg-muted/60' : ''} text-wrap`}>
                 <TableCell>{r.code}</TableCell>
-                <TableCell>{r.surname}</TableCell>
-                <TableCell>{r.givenName}</TableCell>
+                <TableCell>{`${r.surname} ${r.givenName}`}</TableCell>
+                <TableCell>{r.email}</TableCell>
+                <TableCell>{r.groupId !== groupId ? 'Rectificado' : ''}</TableCell>
                 <TableCell>{r.asistencias}</TableCell>
                 <TableCell>{r.tardanzas}</TableCell>
                 <TableCell>{r.faltas}</TableCell>
                 <TableCell>
-                  {((r.faltas / r.total) * 100).toFixed(0).padStart(2, "0")} %
+                  <span className={`${percentage >= 30
+                      ? 'dark:text-rose-200 dark:bg-rose-950/35 text-rose-800 bg-red-100 font-semibold'
+                      : percentage >= 10
+                          ? 'dark:text-orange-200 dark:bg-orange-950/35 text-orange-800 bg-orange-100 font-semibold'
+                          : ''
+                  } py-1 rounded-md px-[clamp(0.25rem,0.5rem+1dvw,0.75rem)]`}>
+                    {percentage.toFixed(0).padStart(2, "0")} %
+                  </span>
                 </TableCell>
               </TableRow>
-            ))}
+            })}
           </TableBody>
         </Table>
       </CardContent>

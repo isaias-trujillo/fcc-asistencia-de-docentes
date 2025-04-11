@@ -1,13 +1,15 @@
-import {createDirectus, realtime} from "@directus/sdk";
+import {createDirectus, readItems, rest} from "@directus/sdk";
 import {create} from "zustand/react";
 import EnrollmentScheme from "@/modules/students/application/EnrollmentScheme.ts";
-import Student from "@/modules/students/domain/Student.ts";
 import schemeToStudent from "@/modules/students/application/schemeToStudent.ts";
+import Group from "@/modules/groups/domain/Group.ts";
+import {ScheduleScheme} from "@/modules/groups/application/ScheduleScheme.ts";
+import Student from "@/modules/students/domain/Student.ts";
 
 type Store = {
-    search: (groupId: string) => Promise<void>;
+    search: ({group}: { group: Group }) => Promise<void>;
     raw: Record<PropertyKey, EnrollmentScheme>;
-    data: () => Student[];
+    data: () => (Student & { groupId: string })[];
     disconnect: () => void;
     connected: boolean;
     connect: () => Promise<void>;
@@ -15,80 +17,54 @@ type Store = {
 
 const useLiveStudents = create<Store>((setState, getState) => {
     const client = createDirectus(
-        import.meta.env.VITE_DIRECTUS_WS_URL as string,
-    ).with(
-        realtime({
-            authMode: "handshake",
-        }),
-    );
-    const search = async (groupId: string) => {
+        import.meta.env.VITE_DIRECTUS_API_URL as string,
+    ).with(rest({credentials: "include"}))
+    const search: Store['search'] = async ({group}) => {
         setState({raw: {}});
-        client.sendMessage({
-            type: "subscribe",
-            collection: "matriculas",
-            query: {
-                filter: {
-                    grupo: {
-                        id: {
-                            _eq: groupId,
-                        },
-                    },
+        const childrenGroups = await client.request(readItems('horarios', {
+            filter: {
+                'codigo_de_asignatura_de_referencia': {
+                    _eq: group.course.code
                 },
-                fields: ["*", "alumno.*"],
-                sort: [
-                    "alumno.apellido_paterno",
-                    "alumno.apellido_materno",
-                    "alumno.nombres",
-                ],
+                'seccion_de_referencia': {
+                    _eq: group.section
+                }
             },
-        });
+            limit: -1
+        })).catch(() => []) as {grupo: ScheduleScheme['grupo']['id']}[];
+        const ORFilters = childrenGroups.map((schedule) => ({
+            grupo: {
+                id: {
+                    _eq: schedule.grupo
+                }
+            }
+        }));
 
-        client.onWebSocket("message", (callback) => {
-            if (callback.type !== "subscription") {
-                return;
-            }
-            switch (callback.event) {
-                case "init": {
-                    const data = (callback?.data ?? []) as EnrollmentScheme[];
-                    setState((prev) => ({
-                        ...prev,
-                        search,
-                        raw: Object.fromEntries(
-                            data.map((scheme) => [scheme.id, scheme]),
-                        ),
-                    }));
-                    break;
-                }
-                case "create":
-                case "update": {
+        const enrollments = await client.request(readItems('matriculas', {
+            filter: {
+                _or: [
                     {
-                        const data = (callback?.data ?? []) as EnrollmentScheme[];
-                        setState((prev) => ({
-                            ...prev,
-                            search,
-                            raw: {
-                                ...prev.raw,
-                                ...Object.fromEntries(
-                                    data.map((scheme) => [scheme.id, scheme]),
-                                ),
-                            },
-                        }))
-                        break;
+                        _or: ORFilters
+                    },
+                    {
+                        grupo: {
+                            id: {
+                                _eq: group.id
+                            }
+                        }
                     }
-                }
-                case "delete": {
-                    const data = (callback?.data ?? []) as string[];
-                    // for this case data is an array of ids
-                    setState((prev) => {
-                        return {
-                            ...prev,
-                            search,
-                            raw: Object.fromEntries(Object.entries(prev.raw).filter(([key]) => !data.includes(key))),
-                        };
-                    });
-                    break;
-                }
-            }
+                ],
+
+            },
+            fields: ['*', 'alumno.*'],
+            sort: ['alumno.apellido_paterno', 'alumno.apellido_materno', 'alumno.nombres'],
+            limit: -1
+        })).catch(() => []) as EnrollmentScheme[];
+
+        setState({
+            raw: Object.fromEntries(
+                enrollments.map((scheme) => [scheme.id, scheme]),
+            ),
         });
     };
     return {
@@ -97,7 +73,6 @@ const useLiveStudents = create<Store>((setState, getState) => {
         data: () => schemeToStudent(getState().raw),
         disconnect: () => {
             if (!getState().connected) return;
-            client.disconnect();
             setState(prev => ({...prev, connected: false, raw: {}}));
         },
         connected: false,
@@ -105,9 +80,6 @@ const useLiveStudents = create<Store>((setState, getState) => {
             if (getState().connected) {
                 return;
             }
-            await client.connect()
-                .then(() => setState({connected: true}))
-                .catch(() => setState({connected: false}));
         },
     };
 });

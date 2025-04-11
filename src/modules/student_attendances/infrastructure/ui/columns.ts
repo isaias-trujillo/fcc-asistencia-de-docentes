@@ -1,0 +1,1 @@
+export const columns = ['Código', 'Alumno', 'Correo', 'Estado','Asistencias', 'Tardanzas', 'Faltas', 'Porcentaje de inasistencia']

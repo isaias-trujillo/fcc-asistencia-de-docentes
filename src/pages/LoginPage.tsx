@@ -17,7 +17,7 @@ const LoginPage = () => {
           <CardTitle className="text-[clamp(1.15rem,1rem+2vh,3rem)]">
             Sistema de Marcación de Docentes
           </CardTitle>
-          <CardDescription className="text-[clamp(1rem,0.75rem+1vw,1.5rem)] font-semibold">
+          <CardDescription className="text-[clamp(0.75rem,1rem+1dvw,1.25rem)] italic bg-[#7e1e20] text-white w-fit py-2 px-4 rounded-md">
             Posgrado
           </CardDescription>
         </CardHeader>

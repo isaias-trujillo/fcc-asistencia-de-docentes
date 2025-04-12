@@ -17,14 +17,14 @@ const NotCheckInDialog = ({isEmpty, isAllChecked}: { isEmpty: boolean, isAllChec
     }
     return <Dialog>
         <DialogTrigger asChild>
-            <Button className="w-full flex justify-start gap-2">
-                <ListChecks/>
+            <Button className="w-full flex justify-start gap-2 p-[clamp(1rem,1.75rem+1vh,2rem)] text-[clamp(0.75rem,0.75rem+1dvw,1.25rem)]">
+                <ListChecks className='size-[clamp(1rem,1.25rem+1dvw,1.5rem)]' />
                 Pasar lista
             </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className={"text-[clamp(0.75rem,1rem+1dvw,1.5rem)]"}>
                     {isEmpty
                         ? 'No has marcado tu entrada'
                         : isAllChecked
@@ -32,7 +32,7 @@ const NotCheckInDialog = ({isEmpty, isAllChecked}: { isEmpty: boolean, isAllChec
                             : 'OK'
                     }
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className={"text-[clamp(0.75rem,0.75rem+1dvw,1.25rem)] text-foreground"}>
                     {isEmpty
                         ? 'Una vez hayas marcado tu entrada, podrás pasar lista'
                         : isAllChecked

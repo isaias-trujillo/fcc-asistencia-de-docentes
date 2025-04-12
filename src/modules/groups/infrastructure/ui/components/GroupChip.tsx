@@ -12,27 +12,22 @@ const GroupChip = ({ groupId }: { groupId?: string }) => {
   if (!group) {
     return <></>;
   }
-  return (
-    <section className="flex flex-row items-center justify-end max-md:justify-center gap-4 max-w-fit text-[clamp(0.75rem,1rem+1dvw,1.25rem)]">
-      {aula && <span>{aula}</span>}
-      {aula && <span>-</span>}
-      <span>
-        {group.course.name
-          .toLocaleLowerCase("es-ES")
-          .split(" ")
-          .map((word) => {
-            if (upperWords.includes(word.toUpperCase())) {
-              return word.toUpperCase();
-            }
-            if (word.length <= 3) {
-              return word;
-            }
-            return word.charAt(0).toUpperCase() + word.slice(1);
-          })
-          .join(" ")}
-      </span>
-    </section>
-  );
+  const course = group.course.name
+      .toLocaleLowerCase("es-ES")
+      .split(" ")
+      .map((word) => {
+        if (upperWords.includes(word.toUpperCase())) {
+          return word.toUpperCase();
+        }
+        if (word.length <= 3) {
+          return word;
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(" ");
+
+  const label = !aula ? course : `${aula} - ${course}`;
+  return <span className="text-[clamp(0.75rem,1rem+1dvw,1.25rem)] text-wrap">{label}</span>;
 };
 
 export default GroupChip;

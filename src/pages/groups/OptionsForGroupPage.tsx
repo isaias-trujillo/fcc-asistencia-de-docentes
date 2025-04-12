@@ -18,7 +18,7 @@ const OptionsForGroupPage = () => {
           <GroupNavBar groupId={groupId} />
           <section
             className={
-              "flex flex-row flex-wrap w-full gap-[clamp(1rem,1.25rem+2vh,2rem)]"
+              "flex flex-col flex-wrap w-full gap-[clamp(1rem,1.25rem+2vh,2rem)]"
             }
           >
             <TeacherAttendanceCard groupId={groupId} />

@@ -17,13 +17,13 @@ const LoginPage = () => {
           <CardTitle className="text-[clamp(1.15rem,1rem+2vh,3rem)]">
             Sistema de Marcación de Docentes
           </CardTitle>
-          <CardDescription className="text-[clamp(1rem,0.75rem+1vw,1.5rem)]">
-            Pregrado
+          <CardDescription className="text-[clamp(1rem,0.75rem+1vw,1.5rem)] font-semibold">
+            Posgrado
           </CardDescription>
         </CardHeader>
         <CardContent>
           <img
-            src={`${import.meta.env.BASE_URL}/24666574_6977678 2.svg`}
+            src={`${import.meta.env.BASE_URL}/9148013_4099578.svg`}
             alt="something in the way..."
           />
           <LoginForm />

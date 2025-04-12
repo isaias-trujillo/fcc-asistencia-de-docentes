@@ -20,7 +20,7 @@ const OptionsForGroup = ({ groupId }: { groupId: string }) => {
   const aula = params.get("aula");
 
   return (
-    <Card className="flex flex-row flex-wrap justify-center items-center grow">
+    <Card className="flex flex-row flex-wrap justify-center items-center max-lg:justify-start grow">
       <CardHeader>
         <CardTitle className={"text-[clamp(1rem,1rem+1vw,1.5rem)] font-normal"}>
           ¿Qué necesitas?
@@ -31,8 +31,8 @@ const OptionsForGroup = ({ groupId }: { groupId: string }) => {
           <li key={"pasar-lista"}>
             {!isEmpty && !isAllChecked && (
               <NavLink to={`/cursos/${groupId}/pasar-lista?aula=${aula}`}>
-                <Button className="w-full flex justify-start gap-2">
-                  <ListChecks />
+                <Button className="flex justify-start gap-2 p-[clamp(1rem,1.75rem+1vh,2rem)] text-[clamp(0.75rem,0.75rem+1dvw,1.25rem)]">
+                  <ListChecks className='size-[clamp(1rem,1.25rem+1dvw,1.5rem)]'/>
                   Pasar lista
                 </Button>
               </NavLink>
@@ -43,8 +43,8 @@ const OptionsForGroup = ({ groupId }: { groupId: string }) => {
             <NavLink
               to={`/cursos/${groupId}/reporte-de-asistencia?aula=${aula}`}
             >
-              <Button className="w-full flex justify-start gap-2">
-                <ChartBar />
+              <Button className="flex justify-start gap-2 p-[clamp(1rem,1.75rem+1vh,2rem)] text-[clamp(0.75rem,0.75rem+1dvw,1.25rem)]">
+                <ChartBar className='size-[clamp(1rem,1.25rem+1dvw,1.5rem)]'/>
                 Ver el reporte de asistencia
               </Button>
             </NavLink>

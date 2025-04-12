@@ -74,7 +74,7 @@ const TeacherAttendanceCard = ({ groupId }: { groupId: string }) => {
     return (
       <Card
         className={
-          "flex flex-row max-lg:flex-wrap grow w-full items-center justify-center"
+          "flex flex-row max-lg:flex-wrap items-center justify-center grow"
         }
       >
         <CardHeader
@@ -89,7 +89,7 @@ const TeacherAttendanceCard = ({ groupId }: { groupId: string }) => {
   return (
     <Card className={"flex flex-row flex-wrap justify-start grow"}>
       <CardHeader
-        className={`flex flex-row flex-wrap justify-start gap-y-2 gap-x-4 max-w-fit`}
+        className={`flex flex-col flex-wrap items-start justify-start  max-md:justify-center gap-y-2 gap-x-4 max-w-fit `}
       >
         <CardTitle className={"text-[clamp(1rem,1rem+1vw,1.5rem)] font-normal"}>
           {isEmpty
@@ -100,8 +100,8 @@ const TeacherAttendanceCard = ({ groupId }: { groupId: string }) => {
         </CardTitle>
         <CardDescription>
           {isEmpty && (
-            <Button className={"max-sm:grow"} onClick={onClick}>
-              <SendIcon /> Marcar mi entrada
+            <Button className={"max-sm:grow p-[clamp(1rem,1.75rem+1vh,2rem)] text-[clamp(0.75rem,1rem+1dvw,1.25rem)]"} onClick={onClick}>
+              <SendIcon className='size-[clamp(1rem,1.25rem+1dvw,1.5rem)]'/> Marcar mi entrada
             </Button>
           )}
           {!isEmpty && isAllChecked && (
@@ -111,7 +111,7 @@ const TeacherAttendanceCard = ({ groupId }: { groupId: string }) => {
         </CardDescription>
       </CardHeader>
       {!!Object.keys(attendances).length && (
-        <CardContent className="max-md:grow gap-[clamp(1rem,1.25rem+2vh,2rem)] grow w-full flex flex-row flex-wrap">
+        <CardContent className="max-md:grow gap-[clamp(1rem,1.25rem+2vh,2rem)] max-w-fit flex flex-row flex-wrap">
           {Object.values(attendances).map((a, index) => (
             <div
               key={a.id}

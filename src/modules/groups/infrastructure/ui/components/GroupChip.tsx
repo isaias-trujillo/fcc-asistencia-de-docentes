@@ -26,7 +26,7 @@ const GroupChip = ({ groupId }: { groupId?: string }) => {
       })
       .join(" ");
 
-  const label = !aula ? course : `${aula} - ${course}`;
+  const label = (!aula || aula === 'N/A') ? course : `${aula} - ${course}`;
   return <span className="text-[clamp(0.75rem,1rem+1dvw,1.25rem)] text-wrap">{label}</span>;
 };
 

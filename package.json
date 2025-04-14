@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && cp .htaccess asistencia-de-docentes-de-posgrado",
+    "build": "tsc -b && vite build && cp .htaccess asistencia-de-docentes",
     "lint": "eslint .",
     "preview": "vite preview"
   },

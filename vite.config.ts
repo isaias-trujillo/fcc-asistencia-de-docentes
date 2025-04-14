@@ -7,8 +7,8 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), tsconfigPaths(), nodePolyfills()],
-  base: '/asistencia-de-docentes-de-posgrado',
+  base: '/asistencia-de-docentes',
   build:{
-    outDir: "asistencia-de-docentes-de-posgrado",
+    outDir: "asistencia-de-docentes",
   }
 })

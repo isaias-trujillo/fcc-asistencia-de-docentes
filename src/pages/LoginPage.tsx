@@ -17,13 +17,21 @@ const LoginPage = () => {
           <CardTitle className="text-[clamp(1.15rem,1rem+2vh,3rem)]">
             Sistema de Marcación de Docentes
           </CardTitle>
-          <CardDescription className="text-[clamp(1rem,0.75rem+1vw,1.5rem)]">
-            Pregrado
+          <CardDescription className="text-[clamp(0.75rem,1rem+1dvw,1.25rem)] italic bg-[#7e1e20] text-white w-fit py-2 px-4 rounded-md">
+            Posgrado
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <a
+              href={`${import.meta.env.BASE_URL}/manual-de-uso.pdf`}
+              target='_blank'
+              className='bg-accent rounded-md py-2 px-4 text-center flex items-center gap-4 justify-center'>
+            <img src='https://cdn-icons-png.flaticon.com/512/18063/18063801.png'
+                 className='size-[clamp(1rem,1.5rem+2dvw,2.5rem)]' alt='pdf logo'/>
+            <span className='font-semibold text-[clamp(0.75rem,0.75rem+1dvh,1.15rem)]'>Manual de uso del sistema</span>
+          </a>
           <img
-            src={`${import.meta.env.BASE_URL}/24666574_6977678 2.svg`}
+            src={`${import.meta.env.BASE_URL}/9148013_4099578.svg`}
             alt="something in the way..."
           />
           <LoginForm />

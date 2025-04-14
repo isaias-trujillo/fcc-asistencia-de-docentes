@@ -24,7 +24,7 @@ const AppNavBar = () => {
         />
         <p className="flex flex-row max-sm:grow text-[clamp(0.75rem,0.75rem+1dvh,1.25rem)] gap-[clamp(0.25rem,0.25rem+1vh,.5rem)]">
           <span className="font-semibold">{profile ?? "@docente"}</span>
-          <span>(Pregrado)</span>
+          <span>(Posgrado)</span>
         </p>
       </div>
       <Button onClick={onLogout} className="max-sm:grow">

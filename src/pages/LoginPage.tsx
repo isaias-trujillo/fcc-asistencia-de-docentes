@@ -22,6 +22,14 @@ const LoginPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <a
+              href={`${import.meta.env.BASE_URL}/manual-de-uso.pdf`}
+              target='_blank'
+              className='bg-accent rounded-md py-2 px-4 text-center flex items-center gap-4 justify-center'>
+            <img src='https://cdn-icons-png.flaticon.com/512/18063/18063801.png'
+                 className='size-[clamp(1rem,1.5rem+2dvw,2.5rem)]' alt='pdf logo'/>
+            <span className='font-semibold text-[clamp(0.75rem,0.75rem+1dvh,1.15rem)]'>Manual de uso del sistema</span>
+          </a>
           <img
             src={`${import.meta.env.BASE_URL}/9148013_4099578.svg`}
             alt="something in the way..."

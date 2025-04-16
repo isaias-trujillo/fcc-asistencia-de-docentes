@@ -68,10 +68,6 @@ const GroupsPage = () => {
               </li>
             ))}
         </ul>
-        <p className={"self-center text-xl"}>
-          Los horarios presentados aún no son definitivos, disculpe los
-          inconvenientes.
-        </p>
         <BorderBeam duration={6} size={150} />
         <BorderBeam duration={6} size={150} delay={3} />
       </InnerLayout>

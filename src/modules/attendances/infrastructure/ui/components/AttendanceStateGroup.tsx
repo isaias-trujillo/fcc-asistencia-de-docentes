@@ -62,7 +62,7 @@ const AttendanceStateGroup: FC<AttendanceStateGroupProps> = memo(({ studentId })
                 <Type className="size-[clamp(1rem,1rem+2dvw,1.5rem)]" />
             </button>
             <button
-                className={cn(baseClass, selected === "falta" && selectedClass.falta)}
+                className={cn(baseClass, (selected === "falta" || selected.trim().length === 0) && selectedClass.falta)}
                 onClick={() => handleClick("falta")}
                 aria-label="Marcar como ausente"
             >

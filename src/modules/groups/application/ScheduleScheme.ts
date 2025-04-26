@@ -13,6 +13,12 @@ export type ScheduleScheme = {
     aula_de_referencia?: string | null;
 }
 
+export type ScheduleWithCareerScheme = Omit<ScheduleScheme, 'escuela'> & {escuela: {
+    id: string;
+    abreviatura: string;
+    nombre: string;
+    }}
+
 export type WeekDay = 'LUNES' | 'MARTES' | 'MIERCOLES' | 'JUEVES' | 'VIERNES' | 'SABADO'
 
 interface Grupo {

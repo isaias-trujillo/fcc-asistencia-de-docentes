@@ -1,7 +1,7 @@
-import {ScheduleScheme} from "./ScheduleScheme.ts";
+import {ScheduleWithCareerScheme} from "./ScheduleScheme.ts";
 import Group from "../domain/Group.ts";
 
-const schemeToSchedule = (scheme: ScheduleScheme) => ({
+const schemeToSchedule = (scheme: ScheduleWithCareerScheme) => ({
     id: scheme.id,
     day: scheme.dia_de_la_semana,
     start: scheme.hora_de_inicio,
@@ -9,7 +9,7 @@ const schemeToSchedule = (scheme: ScheduleScheme) => ({
     classroom: scheme.aula,
 });
 
-const schemeToGroup = (schemes: Record<PropertyKey, ScheduleScheme>): Group[] => {
+const schemeToGroup = (schemes: Record<PropertyKey, ScheduleWithCareerScheme>): Group[] => {
     // create a hashmap:
     // key: group id
     // value: group
@@ -33,6 +33,10 @@ const schemeToGroup = (schemes: Record<PropertyKey, ScheduleScheme>): Group[] =>
             classroom: scheme.aula,
             teacherId: scheme.docente.toString(),
             schedules: [schemeToSchedule(scheme)],
+            program: {
+                abbreviation: scheme.escuela.abreviatura,
+                name: scheme.escuela.nombre
+            }
         }
         return;
     });

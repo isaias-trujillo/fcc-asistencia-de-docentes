@@ -11,6 +11,11 @@ type Group = {
     classroom?: string | null;
     teacherId: string;
     schedules: Array<Schedule>;
+    program?: Partial<{
+        abbreviation: string;
+        name: string;
+    }
+    >
 }
 
 export default Group

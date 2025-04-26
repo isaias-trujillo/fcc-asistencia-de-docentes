@@ -28,10 +28,22 @@ const GroupCard: FC<Props> = ({ group }) => {
                   "bg-yellow-400 text-black text-[clamp(0.75rem,0.75rem+1dvh,1.5rem)] p-[clamp(0.25rem,0.25rem+1dvh,1.5rem)]"
                 }
               >
-                Aula: {group.classroom}
+                Programa: {group.classroom}
               </Badge>
             </CardTitle>
           )}
+          {group.program && (
+              <CardTitle>
+                <Badge
+                    className={
+                      "bg-yellow-400 text-black text-[clamp(0.75rem,0.75rem+1dvh,1.5rem)] p-[clamp(0.25rem,0.25rem+1dvh,1.5rem)]"
+                    }
+                >
+                  Programa: {group.program.abbreviation}
+                </Badge>
+              </CardTitle>
+          )}
+
           <span className="max-lg:text-center">
             {group.course.name.split(" ").map(fixCourseName).join(" ")}
           </span>

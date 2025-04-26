@@ -1,13 +1,13 @@
 import {createDirectus, realtime} from "@directus/sdk";
 import {create} from "zustand/react";
 import {persist} from "zustand/middleware";
-import {ScheduleScheme} from "@/modules/groups/application/ScheduleScheme.ts";
+import {ScheduleWithCareerScheme} from "@/modules/groups/application/ScheduleScheme.ts";
 import schemeToGroup from "@/modules/groups/application/schemeToGroup.ts";
 import Group from "@/modules/groups/domain/Group.ts";
 
 type Store = {
     search: (documentNumber: string) => Promise<void>;
-    raw: Record<PropertyKey, ScheduleScheme>;
+    raw: Record<PropertyKey, ScheduleWithCareerScheme>;
     data: () => Group[]
 };
 
@@ -33,7 +33,7 @@ const useLiveGroups = create(persist<Store>((setState, getState) => {
                         "_eq": false
                     }
                 },
-                fields: ['*', 'grupo.*', 'grupo.asignatura.*'],
+                fields: ['*', 'grupo.*', 'grupo.asignatura.*', 'escuela.*'],
             }
         })
 
@@ -41,7 +41,7 @@ const useLiveGroups = create(persist<Store>((setState, getState) => {
             if (callback.type !== 'subscription') {
                 return;
             }
-            const data = (callback?.data ?? []) as ScheduleScheme[];
+            const data = (callback?.data ?? []) as ScheduleWithCareerScheme[];
             switch (callback.event) {
                 case 'init': {
                     setState(() => ({

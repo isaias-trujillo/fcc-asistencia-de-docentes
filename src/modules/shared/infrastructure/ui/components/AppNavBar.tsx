@@ -12,6 +12,7 @@ const AppNavBar = () => {
         logout().then(() => disconnect()).finally(() => {
             localStorage.clear();
             navigate("/");
+            window.location.reload();
         });
 
   return (

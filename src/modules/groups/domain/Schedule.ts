@@ -1,8 +1,8 @@
-import Day from "@/modules/chron/domain/Day.ts";
+import DayOfWeek from "@/modules/chron/domain/DayOfWeek.ts";
 
 type Schedule = Readonly<{
     id: number;
-    day: keyof typeof Day;
+    day: keyof typeof DayOfWeek;
     start: string;
     end: string;
 }

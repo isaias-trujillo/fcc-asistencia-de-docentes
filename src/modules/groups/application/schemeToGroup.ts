@@ -1,5 +1,6 @@
 import {ScheduleWithCareerScheme} from "./ScheduleScheme.ts";
 import Group from "../domain/Group.ts";
+import DayOfWeek from "@/modules/chron/domain/DayOfWeek.ts";
 
 const schemeToSchedule = (scheme: ScheduleWithCareerScheme) => ({
     id: scheme.id,
@@ -20,6 +21,11 @@ const schemeToGroup = (schemes: Record<PropertyKey, ScheduleWithCareerScheme>): 
         const group = groups[key] ?? undefined;
         if (group) {
             group.schedules.push(schemeToSchedule(scheme));
+            group.schedules.sort((a, b) => {
+                const vA = DayOfWeek[a.day];
+                const vB = DayOfWeek[b.day];
+                return vA - vB;
+            });
             return;
         }
         groups[key] = {

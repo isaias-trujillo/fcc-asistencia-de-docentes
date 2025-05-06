@@ -1,6 +1,8 @@
+import DayOfWeek from "@/modules/chron/domain/DayOfWeek.ts";
+
 export type ScheduleScheme = {
     id: number
-    dia_de_la_semana: WeekDay
+    dia_de_la_semana: keyof typeof DayOfWeek
     hora_de_inicio: string
     hora_de_finalizacion: string
     escuela: string
@@ -12,14 +14,6 @@ export type ScheduleScheme = {
     seccion_de_referencia?: number | null;
     aula_de_referencia?: string | null;
 }
-
-export type ScheduleWithCareerScheme = Omit<ScheduleScheme, 'escuela'> & {escuela: {
-    id: string;
-    abreviatura: string;
-    nombre: string;
-    }}
-
-export type WeekDay = 'LUNES' | 'MARTES' | 'MIERCOLES' | 'JUEVES' | 'VIERNES' | 'SABADO'
 
 interface Grupo {
     id: string
@@ -40,4 +34,7 @@ interface Asignatura {
     date_updated: string
     codigo: string
     nombre: string
+}
+
+export class WeekDay {
 }

@@ -21,7 +21,7 @@ const GroupCard: FC<Props> = ({ group }) => {
     <NavLink to={`/cursos/${group.id}?aula=${group.classroom}`} key={group.id}>
       <Card className="h-full bg-background hover:bg-accent transition-all duration-300 ease-in gap-4">
         <CardHeader className="gap-4 text-[clamp(0.75rem,0.75rem+1dvh,1.25rem)] flex max-lg:flex-row max-lg:items-center max-lg:justify-center max-lg:flex-wrap">
-          {group.classroom && group.classroom !== 'N/A' && (
+          {group.classroom && group.classroom !== 'N/A' && group.classroom !== 'undefined' && (
             <CardTitle>
               <Badge
                 className={

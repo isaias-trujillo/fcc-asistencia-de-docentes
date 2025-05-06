@@ -1,5 +1,5 @@
 import Group from "@/modules/groups/domain/Group.ts";
-import { WeekDay } from "@/modules/groups/application/ScheduleScheme.ts";
+import DayOfWeek from "@/modules/chron/domain/DayOfWeek.ts";
 
 const chars = [
   {
@@ -35,7 +35,7 @@ const getScheduleBasedOnDay = (payload: { group: Group; day: string }) => {
       }, char),
     )
     .join("")
-    .toUpperCase() as WeekDay;
+    .toUpperCase() as keyof typeof DayOfWeek;
 
   const schedule = group.schedules.find(
     (schedule) => schedule.day === fixedDay,

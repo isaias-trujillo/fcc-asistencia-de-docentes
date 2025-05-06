@@ -36,5 +36,10 @@ interface Asignatura {
     nombre: string
 }
 
-export class WeekDay {
+export type ScheduleWithCareerScheme = ScheduleScheme & {
+    escuela: {
+        id: number | string;
+        nombre: string
+        abreviatura: string
+    }
 }

@@ -23,7 +23,6 @@ const AuthWrapper: FC<{ children: ReactNode }> = ({ children }) => {
             search(documentNumber);
         }
     });
-    console.log(`Seaching profile`)
   }, [connected, documentNumber]);
 
   const onLogout = () =>

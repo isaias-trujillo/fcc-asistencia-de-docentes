@@ -42,7 +42,7 @@ const useChron = create<ChronStore>((set, get) => {
       ...prev,
       date: new Date(prev.date.getTime() + 1000),
       accumulatedSeconds: prev.accumulatedSeconds + 1,
-      synced: prev.accumulatedSeconds <= 20,
+      synced: prev.accumulatedSeconds <= 10,
     }));
 
   return {
